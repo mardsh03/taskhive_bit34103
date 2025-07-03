@@ -180,4 +180,29 @@ class TaskProvider with foundation.ChangeNotifier {
       foundation.debugPrint('Error clearing data: $e');
     }
   }
+
+  Future<void> updateCategory(Category category) async {
+    try {
+      await _databaseHelper.updateCategory(category.toMap());
+      await loadCategories(); // Reload from DB to ensure UI is up to date
+      notifyListeners();
+    } catch (e) {
+      foundation.debugPrint('Error updating category: $e');
+    }
+  }
+
+  Future<void> reassignTasks(int oldCategoryId, int? newCategoryId) async {
+    try {
+      await _databaseHelper.reassignTasksToCategory(oldCategoryId, newCategoryId);
+      // Update local tasks list
+      for (var i = 0; i < _tasks.length; i++) {
+        if (_tasks[i].categoryId == oldCategoryId) {
+          _tasks[i] = _tasks[i].copyWith(categoryId: newCategoryId);
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      foundation.debugPrint('Error reassigning tasks: $e');
+    }
+  }
 } 

@@ -115,12 +115,34 @@ class CategoryFilter extends StatelessWidget {
         return Icons.favorite;
       case 'home':
         return Icons.home;
+      case 'shopping_cart':
       case 'shopping':
         return Icons.shopping_cart;
+      case 'health_and_safety':
       case 'health':
         return Icons.health_and_safety;
+      case 'account_balance_wallet':
+      case 'wallet':
       case 'finance':
         return Icons.account_balance_wallet;
+      case 'star':
+        return Icons.star;
+      case 'book':
+        return Icons.book;
+      case 'music_note':
+        return Icons.music_note;
+      case 'sports_soccer':
+        return Icons.sports_soccer;
+      case 'flight':
+        return Icons.flight;
+      case 'restaurant':
+      case 'food':
+        return Icons.restaurant;
+      case 'directions_car':
+      case 'car':
+        return Icons.directions_car;
+      case 'task':
+        return Icons.task;
       default:
         return Icons.task;
     }

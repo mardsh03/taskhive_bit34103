@@ -9,6 +9,7 @@ import '../widgets/category_filter.dart';
 import 'tasks_screen.dart';
 import 'package:confetti/confetti.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'add_task_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -296,7 +297,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           task: task,
                                           category: category,
                                           onTap: () {
-                                            // TODO: Navigate to task details
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddTaskScreen(task: task),
+                                              ),
+                                            );
                                           },
                                           onToggle: () async {
                                             taskProvider.toggleTaskCompletion(task.id!);

@@ -5,6 +5,8 @@ import 'package:taskhive/models/task.dart';
 import 'package:taskhive/widgets/task_card.dart';
 import 'package:taskhive/widgets/category_filter.dart';
 import 'package:taskhive/screens/add_task_screen.dart';
+import 'package:confetti/confetti.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class TasksScreen extends StatefulWidget {
   final int initialTab;
@@ -18,16 +20,21 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   int? _selectedCategoryId;
+  late ConfettiController _confettiController;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialTab);
+    _confettiController = ConfettiController(duration: const Duration(seconds: 1));
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _confettiController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -78,6 +85,19 @@ class _TasksScreenState extends State<TasksScreen> with TickerProviderStateMixin
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTaskScreen(),
+            ),
+          );
+          setState(() {}); // Refresh after adding
+        },
+        child: const Icon(Icons.add),
+        tooltip: 'Add Task',
+      ),
     );
   }
 
@@ -94,23 +114,47 @@ class _TasksScreenState extends State<TasksScreen> with TickerProviderStateMixin
         if (tasks.isEmpty) {
           return Center(child: Text('No tasks found'));
         }
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            final task = tasks[index];
-            final category = taskProvider.getCategoryById(task.categoryId);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: TaskCard(
-                task: task,
-                category: category,
-                onTap: () => _editTask(task),
-                onToggle: () => taskProvider.toggleTaskCompletion(task.id!),
-                onDelete: () => _deleteTask(task),
+        return Stack(
+          children: [
+            ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                final task = tasks[index];
+                final category = taskProvider.getCategoryById(task.categoryId);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TaskCard(
+                    task: task,
+                    category: category,
+                    onTap: () => _editTask(task),
+                    onToggle: () async {
+                      taskProvider.toggleTaskCompletion(task.id!);
+                      if (task.isCompleted == false) {
+                        _confettiController.play();
+                        await _audioPlayer.play(AssetSource('audio/success.mp3'));
+                      }
+                    },
+                    onDelete: () => _deleteTask(task),
+                  ),
+                );
+              },
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                colors: const [Colors.green, Colors.blue, Colors.orange, Colors.purple, Colors.amber],
+                numberOfParticles: 30,
+                maxBlastForce: 20,
+                minBlastForce: 8,
+                emissionFrequency: 0.05,
+                gravity: 0.2,
               ),
-            );
-          },
+            ),
+          ],
         );
       },
     );
@@ -164,36 +208,60 @@ class _TasksScreenState extends State<TasksScreen> with TickerProviderStateMixin
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            final task = tasks[index];
-            final category = taskProvider.getCategoryById(task.categoryId);
-            
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: TaskCard(
-                task: task,
-                category: category,
-                onTap: () => _editTask(task),
-                onToggle: () => taskProvider.toggleTaskCompletion(task.id!),
-                onDelete: () => _deleteTask(task),
+        return Stack(
+          children: [
+            ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                final task = tasks[index];
+                final category = taskProvider.getCategoryById(task.categoryId);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TaskCard(
+                    task: task,
+                    category: category,
+                    onTap: () => _editTask(task),
+                    onToggle: () async {
+                      taskProvider.toggleTaskCompletion(task.id!);
+                      if (task.isCompleted == false) {
+                        _confettiController.play();
+                        await _audioPlayer.play(AssetSource('audio/success.mp3'));
+                      }
+                    },
+                    onDelete: () => _deleteTask(task),
+                  ),
+                );
+              },
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                colors: const [Colors.green, Colors.blue, Colors.orange, Colors.purple, Colors.amber],
+                numberOfParticles: 30,
+                maxBlastForce: 20,
+                minBlastForce: 8,
+                emissionFrequency: 0.05,
+                gravity: 0.2,
               ),
-            );
-          },
+            ),
+          ],
         );
       },
     );
   }
 
-  void _editTask(Task task) {
-    Navigator.push(
+  Future<void> _editTask(Task task) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddTaskScreen(task: task),
       ),
     );
+    setState(() {}); // Refresh after returning
   }
 
   void _deleteTask(Task task) {

@@ -15,22 +15,26 @@ TaskHive is a high-end, feature-rich productivity application designed to help s
 
 ### 🎯 Core Features
 - Smart task management: create, edit, delete, and organize tasks
+- **Edit tasks from both Home and Tasks screens**
 - Category organization & filtering: custom categories with colors and icons, filter tasks by category
-- Category display: task cards show their category
+- Category display: task cards show their category (with icon and color)
 - Priority system: high, medium, low priority levels with color coding
 - Due date management & status tracking
-- Category management: view, edit, delete, and safely reassign tasks
-- Smart notifications: reminders for tasks
+- **Category management: view, edit, delete (safe), and reassign tasks**
+- **Safe deletion:** Cannot delete a category with tasks; must reassign or remove tasks first
+- **Automatic refresh:** Task list updates instantly after add/edit
+- Smart notifications: reminders for tasks (see below)
 - Progress analytics: visual charts and statistics
 - Theme customization: multiple beautiful themes and productivity packs
-- Confetti & audio feedback: celebrate task completion with confetti and sound
+- **Confetti & audio feedback:** Celebrate task completion with confetti and sound (on both Home and Tasks screens)
 - Cross-platform: Android, iOS, Web, Windows, macOS, Linux
 
 ### 🏷️ Category Management
 - Unlimited custom categories
 - Color & icon selection
 - Visual customization and filtering
-- Safe deletion with task reassignment
+- **Edit category title, icon, and color**
+- **Safe deletion with task reassignment required**
 
 ### 🎨 Premium Theme Store
 - 8 premium themes, each with unique icon, color, and name
@@ -47,10 +51,16 @@ TaskHive is a high-end, feature-rich productivity application designed to help s
 ### 🔧 External Services
 - Google Maps integration for location picking
 - Geocoding for address search
-- Local notifications for reminders
+- **Local notifications for reminders** (see below)
 
 ### 🎵 Interactive Media Elements
-- Audio feedback and confetti animation on task completion
+- Audio feedback and confetti animation on task completion (Home & Tasks screens)
+
+### 🔔 Local Notifications
+- **Set a reminder when adding/editing a task**
+- The app will push a local notification at the exact date and time you set
+- Works even if the app is in the background or closed
+- To test: Add a task with a reminder a few minutes in the future and wait for the notification
 
 ### 🔮 Suggested Enhancements (No Firebase Required)
 - REST API integration (e.g., motivational quotes)
@@ -110,12 +120,13 @@ flutter build ios --release
 
 ## 📱 Usage Guide
 
-- **Task Management:** Add, edit, delete, complete, and filter tasks
-- **Category Management:** Create, edit, delete, and filter by categories
+- **Task Management:** Add, edit (from any screen), delete, complete, and filter tasks
+- **Category Management:** Create, edit (title, icon, color), delete (only if empty), and filter by categories
 - **Theme Store:** Browse, purchase (simulated), and select premium themes
 - **Location Features:** Add and search for task locations using Google Maps
-- **Media & Feedback:** Confetti and sound on task completion
+- **Media & Feedback:** Confetti and sound on task completion (Home & Tasks screens)
 - **Settings:** Reset app data with "Clear All Data" for demonstrations
+- **Reminders:** Set reminders for tasks and receive local notifications
 
 ---
 
@@ -139,7 +150,21 @@ flutter build ios --release
    ```
    build/app/outputs/flutter-apk/app-release.apk
    ```
-4. **Submit this APK to your lecturer. No extra signing needed for coursework.**
+4. **Test the APK on a real device (recommended):**
+   - Install and check all features, notifications, and UI
+5. **Submit this APK to your lecturer. No extra signing needed for coursework.**
+
+---
+
+## ✅ Final Submission Checklist
+
+- [x] All features work (tasks, categories, store, analytics, notifications)
+- [x] No critical bugs or crashes
+- [x] All navigation and UI flows are smooth
+- [x] Animations and notifications work as expected
+- [x] App icon and name are correct
+- [x] README is up to date
+- [x] APK is built and tested
 
 ---
 

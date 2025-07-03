@@ -507,6 +507,34 @@ class DatabaseHelper {
     );
   }
 
+  Future<int> updateCategory(Map<String, dynamic> category) async {
+    if (kIsWeb) {
+      print('Web platform: Category update not supported');
+      return 1;
+    }
+    final db = await database;
+    return await db.update(
+      'categories',
+      category,
+      where: 'id = ?',
+      whereArgs: [category['id']],
+    );
+  }
+
+  Future<int> reassignTasksToCategory(int oldCategoryId, int? newCategoryId) async {
+    if (kIsWeb) {
+      print('Web platform: Task reassignment not supported');
+      return 1;
+    }
+    final db = await database;
+    return await db.update(
+      'tasks',
+      {'category_id': newCategoryId},
+      where: 'category_id = ?',
+      whereArgs: [oldCategoryId],
+    );
+  }
+
   // User preferences operations
   Future<String?> getUserPreference(String key) async {
     if (kIsWeb) {

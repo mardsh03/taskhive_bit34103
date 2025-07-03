@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 import '../models/category.dart';
-import '../utils/theme.dart';
+import 'edit_category_screen.dart';
 
 class CategoryManagementScreen extends StatelessWidget {
   const CategoryManagementScreen({super.key});
@@ -130,11 +130,32 @@ class CategoryManagementScreen extends StatelessWidget {
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
           onSelected: (value) {
-            if (value == 'delete') {
+            if (value == 'edit') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditCategoryScreen(category: category),
+                ),
+              );
+            } else if (value == 'delete') {
               _showDeleteConfirmation(context, category, taskProvider);
             }
           },
           itemBuilder: (context) => [
+            PopupMenuItem<String>(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.edit,
+                    color: Colors.blue,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('Edit Category'),
+                ],
+              ),
+            ),
             PopupMenuItem<String>(
               value: 'delete',
               child: Row(
@@ -160,40 +181,40 @@ class CategoryManagementScreen extends StatelessWidget {
 
   void _showDeleteConfirmation(BuildContext context, Category category, TaskProvider taskProvider) {
     final taskCount = taskProvider.getTasksByCategory(category.id!).length;
-    
+    if (taskCount > 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Cannot Delete Category'),
+          content: Text(
+            'This category has $taskCount task${taskCount == 1 ? '' : 's'}.\n\nYou must reassign or remove all tasks from this category before deleting it.'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    // If no tasks, allow deletion as normal
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Delete Category'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Are you sure you want to delete "${category.name}"?',
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              if (taskCount > 0)
-                Text(
-                  'This category has $taskCount task${taskCount == 1 ? '' : 's'} that will be moved to "No Category".',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
-            ],
-          ),
+          content: Text('Are you sure you want to delete "${category.name}"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await taskProvider.deleteCategory(category.id!);
                 Navigator.of(context).pop();
-                taskProvider.deleteCategory(category.id!);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Category "${category.name}" deleted'),
@@ -201,9 +222,6 @@ class CategoryManagementScreen extends StatelessWidget {
                   ),
                 );
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
               child: const Text('Delete'),
             ),
           ],
